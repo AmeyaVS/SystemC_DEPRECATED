@@ -52,6 +52,9 @@ using std::strncmp;
 //  The event class.
 // ----------------------------------------------------------------------------
 
+// kernel-internal event, that is never notified
+const sc_event sc_event::none( kernel_event, "none" );
+
 const char*
 sc_event::basename() const
 {
@@ -285,6 +288,7 @@ sc_event::sc_event( const char* name ) :
     m_name(),
     m_parent_p(NULL),
     m_simc( sc_get_curr_simcontext() ),
+    m_trigger_stamp( ~sc_dt::UINT64_ZERO ),
     m_notify_type( NONE ),
     m_delta_event_index( -1 ),
     m_timed( 0 ),
@@ -307,6 +311,7 @@ sc_event::sc_event() :
     m_name(),
     m_parent_p(NULL),
     m_simc( sc_get_curr_simcontext() ),
+    m_trigger_stamp( ~sc_dt::UINT64_ZERO ),
     m_notify_type( NONE ),
     m_delta_event_index( -1 ),
     m_timed( 0 ),
@@ -329,6 +334,7 @@ sc_event::sc_event( kernel_tag, const char* name ) :
     m_name(),
     m_parent_p(NULL),
     m_simc( sc_get_curr_simcontext() ),
+    m_trigger_stamp( ~sc_dt::UINT64_ZERO ),
     m_notify_type( NONE ),
     m_delta_event_index( -1 ),
     m_timed( 0 ),
@@ -367,6 +373,11 @@ sc_event::~sc_event()
 void
 sc_event::trigger()
 {
+    m_trigger_stamp = m_simc->change_stamp();
+    m_notify_type = NONE;
+    m_delta_event_index = -1;
+    m_timed = 0;
+
     int       last_i; // index of last element in vector now accessing.
     int       size;   // size of vector now accessing.
 
@@ -434,12 +445,12 @@ sc_event::trigger()
 	}
         m_threads_dynamic.resize(last_i+1);
     }
-
-    m_notify_type = NONE;
-    m_delta_event_index = -1;
-    m_timed = 0;
 }
 
+bool sc_event::triggered() const
+{
+    return m_trigger_stamp == m_simc->change_stamp();
+}
 
 bool
 sc_event::remove_static( sc_method_handle method_h_ ) const
@@ -534,7 +545,7 @@ sc_event_timed::allocate()
 
     if( free_list == 0 ) {
         free_list = (sc_event_timed_u*) malloc( ALLOC_SIZE *
-                                                sizeof( sc_event_timed ) );
+                                                sizeof( sc_event_timed_u ) );
         int i = 0;
         for( ; i < ALLOC_SIZE - 1; ++ i ) {
             free_list[i].next = &free_list[i + 1];
@@ -663,17 +674,19 @@ sc_event_list::report_premature_destruction() const
     // is currently running (which is only part of the story):
 
     if( sc_get_current_process_handle().valid() ) {
-        // FIXME: improve error-handling
-        sc_assert( false && "sc_event_list prematurely destroyed" );
+        // called from a destructor, can't throw
+        SC_REPORT_FATAL( SC_ID_EVENT_LIST_FAILED_
+                       , "list prematurely destroyed" );
+        sc_abort();
     }
-
 }
 
 void
 sc_event_list::report_invalid_modification() const
 {
-    // FIXME: improve error-handling
-    sc_assert( false && "sc_event_list modfied while being waited on" );
+    SC_REPORT_ERROR( SC_ID_EVENT_LIST_FAILED_
+                   , "list modfied while being waited on" );
+    // may continue, if suppressed
 }
 
 // ----------------------------------------------------------------------------

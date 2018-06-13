@@ -490,6 +490,9 @@ sub get_systemc_arch
                 if ( $uname_m eq "x86_64" || $uname_m eq "amd64" ) {
                     $arch .= "64";
                 }
+                elsif ( $uname_m eq "aarch64" ) {
+                    $arch .= $uname_m;
+                }
             }
 
         } elsif( $uname_s =~ /((free|net|open)bsd|dragonfly)/i ) {
@@ -551,6 +554,9 @@ sub get_systemc_arch
                 }
                 elsif ( $v_string =~ /.+Version 19\.00/) {   # 2015
                     $arch = "msvc14";
+                }
+                elsif ( $v_string =~ /.+Version 19\.10/) {   # 2017
+                    $arch = "msvc14"; # reuse msvc14 identifier for now
                 }
                 else {
                     die "Error: unsupported compiler '$cxx' ($v_string)\n";
@@ -666,7 +672,7 @@ sub init_globals
     $ENV{ 'SYSTEMC_REGRESSION' } = 1;
 
     # MSVC runtime library defaults
-    $rt_msvc_runtime     = '-MT';
+    $rt_msvc_runtime     = '-MD';
     $rt_msvc_runtime_dbg = $rt_msvc_runtime.'d';
 
     @rt_add_defines = ();
@@ -868,7 +874,7 @@ sub prepare_environment
     } elsif( $rt_systemc_arch eq "hpux11" ) {
         $rt_ccflags       = "-Aa -ext +DA2.0 +DS2.0";
         $rt_optimize_flag = "+O1";
-    } elsif( $rt_systemc_arch =~ /^linux(64)?/ ) {
+    } elsif( $rt_systemc_arch =~ /^linux(?!aarch64)(64)?/ ) {
         $rt_ccflags      .= " -m${rt_cpuarch}";
         $rt_ldflags       = $rt_ccflags;
     } elsif( $rt_systemc_arch =~ /^(free)?bsd(64)?/ ) {

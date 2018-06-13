@@ -84,6 +84,10 @@ protected:
     // These are all virtual functions in sc_trace_file and
     // they need to be defined here.
 
+    // Trace sc_time, sc_event
+    virtual void trace(const sc_time& object, const std::string& name);
+    virtual void trace(const sc_event& object, const std::string& name);
+
     // Trace a boolean object (single bit)
      void trace(const bool& object, const std::string& name);
 
@@ -196,7 +200,7 @@ private:
 
 #if SC_TRACING_PHASE_CALLBACKS_
     // avoid hidden overload warnings
-    virtual void trace( sc_trace_file* ) const { sc_assert(false); }
+    virtual void trace( sc_trace_file* ) const;
 #endif // SC_TRACING_PHASE_CALLBACKS_
 
     // Initialize the tracing mechanism
@@ -204,9 +208,8 @@ private:
 
     unsigned wif_name_index;           // Number of variables traced
 
-    unsigned previous_time_units_low;  // Previous time as 64 bit integer
-    unsigned previous_time_units_high;
-    double   previous_time;            // Previous time as a double
+    unit_type previous_units_low;
+    unit_type previous_units_high;
 
 public:
     // Create wif names for each variable

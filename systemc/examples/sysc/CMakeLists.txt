@@ -39,6 +39,9 @@
 ###############################################################################
 
 
+set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL TRUE)
+set(TEST_FOLDER "examples/sysc" CACHE INTERNAL "" FORCE)
+
 add_subdirectory (2.1/dpipe)
 add_subdirectory (2.1/forkjoin)
 add_subdirectory (2.1/reset_signal_is)
@@ -49,6 +52,7 @@ add_subdirectory (2.1/scx_mutex_w_policy)
 add_subdirectory (2.1/specialized_signals)
 add_subdirectory (2.3/sc_rvd)
 add_subdirectory (2.3/sc_ttd)
+add_subdirectory (2.3/simple_async)
 add_subdirectory (fft/fft_flpt)
 add_subdirectory (fft/fft_fxpt)
 add_subdirectory (fir)

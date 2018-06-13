@@ -73,6 +73,7 @@ namespace sc_dt
 
 namespace sc_core {
 
+class sc_event;
 class sc_time;
 
 template <class T> class sc_signal_in_if;
@@ -101,6 +102,9 @@ public:
 			const std::string& name,                                     \
 			int width ) = 0;
 
+
+    DECL_TRACE_METHOD_A( sc_event )
+    DECL_TRACE_METHOD_A( sc_time )
 
     DECL_TRACE_METHOD_A( bool )
     DECL_TRACE_METHOD_A( sc_dt::sc_bit )
@@ -161,6 +165,9 @@ protected:
     // Write trace info for cycle
     virtual void cycle( bool delta_cycle ) = 0;
 
+    // Helper for event tracing
+    const sc_dt::uint64& event_trigger_stamp( const sc_event& event ) const;
+
     // Flush results and close file
     virtual ~sc_trace_file()
 	{ /* Intentionally blank */ }
@@ -174,20 +181,55 @@ protected:
 // tracing object is passed.
 
 #define DECL_TRACE_FUNC_REF_A(tp)     \
-SC_API void                                  \
+SC_API void                           \
 sc_trace( sc_trace_file* tf,          \
 	  const tp& object,               \
 	  const std::string& name );
 
 #define DECL_TRACE_FUNC_PTR_A(tp)     \
-SC_API void                                  \
+SC_API void                           \
 sc_trace( sc_trace_file* tf,          \
 	  const tp* object,               \
-	  const std::string& name );        \
+	  const std::string& name );      \
 
 #define DECL_TRACE_FUNC_A(tp)         \
 DECL_TRACE_FUNC_REF_A(tp)             \
 DECL_TRACE_FUNC_PTR_A(tp)
+
+#define DECL_TRACE_FUNC_REF_B(tp)                                        \
+SC_API void                                                              \
+sc_trace( sc_trace_file* tf, const tp& object, const std::string& name,  \
+          int width = 8 * sizeof( tp ) );
+
+
+#define DECL_TRACE_FUNC_PTR_B(tp)                                        \
+SC_API void                                                              \
+sc_trace( sc_trace_file* tf, const tp* object, const std::string& name,  \
+          int width = 8 * sizeof( tp ) );
+
+
+#define DECL_TRACE_FUNC_B(tp)  \
+DECL_TRACE_FUNC_REF_B(tp)      \
+DECL_TRACE_FUNC_PTR_B(tp)
+
+
+DECL_TRACE_FUNC_A( sc_event )
+DECL_TRACE_FUNC_A( sc_time )
+
+DECL_TRACE_FUNC_A( bool )
+DECL_TRACE_FUNC_A( float )
+DECL_TRACE_FUNC_A( double )
+
+DECL_TRACE_FUNC_B( unsigned char )
+DECL_TRACE_FUNC_B( unsigned short )
+DECL_TRACE_FUNC_B( unsigned int )
+DECL_TRACE_FUNC_B( unsigned long )
+DECL_TRACE_FUNC_B( char )
+DECL_TRACE_FUNC_B( short )
+DECL_TRACE_FUNC_B( int )
+DECL_TRACE_FUNC_B( long )
+DECL_TRACE_FUNC_B( sc_dt::int64 )
+DECL_TRACE_FUNC_B( sc_dt::uint64 )
 
 
 DECL_TRACE_FUNC_A( sc_dt::sc_bit )
@@ -198,8 +240,13 @@ DECL_TRACE_FUNC_A( sc_dt::sc_uint_base )
 DECL_TRACE_FUNC_A( sc_dt::sc_signed )
 DECL_TRACE_FUNC_A( sc_dt::sc_unsigned )
 
-DECL_TRACE_FUNC_REF_A( sc_dt::sc_bv_base )
-DECL_TRACE_FUNC_REF_A( sc_dt::sc_lv_base )
+DECL_TRACE_FUNC_A( sc_dt::sc_bv_base )
+DECL_TRACE_FUNC_A( sc_dt::sc_lv_base )
+
+DECL_TRACE_FUNC_A( sc_dt::sc_fxval )
+DECL_TRACE_FUNC_A( sc_dt::sc_fxval_fast )
+DECL_TRACE_FUNC_A( sc_dt::sc_fxnum )
+DECL_TRACE_FUNC_A( sc_dt::sc_fxnum_fast )
 
 
 #undef DECL_TRACE_FUNC_REF_A
@@ -207,84 +254,9 @@ DECL_TRACE_FUNC_REF_A( sc_dt::sc_lv_base )
 #undef DECL_TRACE_FUNC_A
 
 
-// ----------------------------------------------------------------------------
-
-#define DEFN_TRACE_FUNC_REF_A(tp)                                             \
-inline                                                                        \
-void                                                                          \
-sc_trace( sc_trace_file* tf, const tp& object, const std::string& name ) \
-{                                                                             \
-    if( tf ) {                                                                \
-	tf->trace( object, name );                                            \
-    }                                                                         \
-}
-
-#define DEFN_TRACE_FUNC_PTR_A(tp)                                             \
-inline                                                                        \
-void                                                                          \
-sc_trace( sc_trace_file* tf, const tp* object, const std::string& name ) \
-{                                                                             \
-    if( tf ) {                                                                \
-	tf->trace( *object, name );                                           \
-    }                                                                         \
-}
-
-#define DEFN_TRACE_FUNC_A(tp)                                                 \
-DEFN_TRACE_FUNC_REF_A(tp)                                                     \
-DEFN_TRACE_FUNC_PTR_A(tp)
-
-
-#define DEFN_TRACE_FUNC_REF_B(tp)                                             \
-inline                                                                        \
-void                                                                          \
-sc_trace( sc_trace_file* tf, const tp& object, const std::string& name,  \
-          int width = 8 * sizeof( tp ) )                                      \
-{                                                                             \
-    if( tf ) {                                                                \
-	tf->trace( object, name, width );                                     \
-    }                                                                         \
-}
-
-#define DEFN_TRACE_FUNC_PTR_B(tp)                                             \
-inline                                                                        \
-void                                                                          \
-sc_trace( sc_trace_file* tf, const tp* object, const std::string& name,  \
-          int width = 8 * sizeof( tp ) )                                      \
-{                                                                             \
-    if( tf ) {                                                                \
-	tf->trace( *object, name, width );                                    \
-    }                                                                         \
-}
-
-
-#define DEFN_TRACE_FUNC_B(tp)                                                 \
-DEFN_TRACE_FUNC_REF_B(tp)                                                     \
-DEFN_TRACE_FUNC_PTR_B(tp)
-
-
-DEFN_TRACE_FUNC_A( bool )
-DEFN_TRACE_FUNC_A( float )
-DEFN_TRACE_FUNC_A( double )
-
-DEFN_TRACE_FUNC_B( unsigned char )
-DEFN_TRACE_FUNC_B( unsigned short )
-DEFN_TRACE_FUNC_B( unsigned int )
-DEFN_TRACE_FUNC_B( unsigned long )
-DEFN_TRACE_FUNC_B( char )
-DEFN_TRACE_FUNC_B( short )
-DEFN_TRACE_FUNC_B( int )
-DEFN_TRACE_FUNC_B( long )
-DEFN_TRACE_FUNC_B( sc_dt::int64 )
-DEFN_TRACE_FUNC_B( sc_dt::uint64 )
-
-
-#undef DEFN_TRACE_FUNC_REF_A
-#undef DEFN_TRACE_FUNC_PTR_A
-#undef DEFN_TRACE_FUNC_A
-
-#undef DEFN_TRACE_FUNC_REF_B
-#undef DEFN_TRACE_FUNC_PTR_B
-#undef DEFN_TRACE_FUNC_B
+#undef DECL_TRACE_FUNC_REF_B
+#undef DECL_TRACE_FUNC_PTR_B
+#undef DECL_TRACE_FUNC_B
 
 
 template <class T> 
