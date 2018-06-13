@@ -22,3 +22,11 @@ ___
 
 [1]: http://accellera.org/downloads/standards/systemc
 
+___
+
+## To-Do
+
+1. Add support for `pkg-config` file generation in `CMake`.
+2. Add C++ standard compilation flag in `configure` build script. Due to
+   frequent mismatch between different project compilation flags options.
+
