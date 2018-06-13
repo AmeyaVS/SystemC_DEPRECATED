@@ -30,7 +30,6 @@
 #include "sysc/communication/sc_communication_ids.h"
 #include "sysc/kernel/sc_event.h"
 
-
 namespace sc_core {
 
 // ----------------------------------------------------------------------------
@@ -72,7 +71,7 @@ sc_interface::sc_interface()
 // special event for never notified cases, note the special name to keep
 // it out of the named event structures.
 
-sc_event sc_interface::m_never_notified(SC_KERNEL_EVENT_PREFIX);
+sc_event sc_interface::m_never_notified( sc_event::kernel_event );
 
 } // namespace sc_core
 

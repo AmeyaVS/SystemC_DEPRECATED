@@ -16,8 +16,8 @@
   permissions and limitations under the License.
 
  *****************************************************************************/
-#ifndef __MULTI_PASSTHROUGH_INITIATOR_SOCKET_H__
-#define __MULTI_PASSTHROUGH_INITIATOR_SOCKET_H__
+#ifndef TLM_UTILS_MULTI_PASSTHROUGH_INITIATOR_SOCKET_H_INCLUDED_
+#define TLM_UTILS_MULTI_PASSTHROUGH_INITIATOR_SOCKET_H_INCLUDED_
 
 #include "multi_socket_bases.h"
 
@@ -37,18 +37,9 @@ index of this socket the calling target is connected.
 template <typename MODULE,
           unsigned int BUSWIDTH = 32,
           typename TYPES = tlm::tlm_base_protocol_types,
-          unsigned int N=0
-#if !(defined SYSTEMC_VERSION & SYSTEMC_VERSION <= 20050714)
-          ,sc_core::sc_port_policy POL = sc_core::SC_ONE_OR_MORE_BOUND
-#endif
-          >
-class multi_passthrough_initiator_socket: public multi_init_base< BUSWIDTH,
-                                                        TYPES,
-                                                        N
-#if !(defined SYSTEMC_VERSION & SYSTEMC_VERSION <= 20050714)
-                                                        ,POL
-#endif
-                                                        >
+          unsigned int N=0, sc_core::sc_port_policy POL = sc_core::SC_ONE_OR_MORE_BOUND>
+class multi_passthrough_initiator_socket
+  : public multi_init_base< BUSWIDTH, TYPES, N, POL>
 {
 
 public:
@@ -66,13 +57,7 @@ public:
                                          sc_core::sc_time&);
   typedef void (MODULE::*dmi_cb)(int, sc_dt::uint64, sc_dt::uint64);
 
-  typedef multi_init_base<BUSWIDTH,
-                        TYPES,
-                        N
-#if !(defined SYSTEMC_VERSION & SYSTEMC_VERSION <= 20050714)
-                        ,POL
-#endif
-                        > base_type;
+  typedef multi_init_base<BUSWIDTH, TYPES, N, POL> base_type;
 
   typedef typename base_type::base_target_socket_type base_target_socket_type;
 
@@ -121,7 +106,7 @@ public:
                                                            sc_core::sc_time&))
   {
     //warn if there already is a callback
-    if (!m_nb_f.empty()){
+    if (m_nb_f.is_valid()){
       display_warning("NBTransport_bw callback already registered.");
       return;
     }
@@ -135,7 +120,7 @@ public:
                              void (MODULE::*cb)(int, sc_dt::uint64, sc_dt::uint64))
   {
     //warn if there already is a callback
-    if (!m_dmi_f.empty()){
+    if (m_dmi_f.is_valid()){
       display_warning("InvalidateDMI callback already registered.");
       return;
     }
@@ -296,4 +281,4 @@ protected:
 
 }
 
-#endif
+#endif // TLM_UTILS_MULTI_PASSTHROUGH_INITIATOR_SOCKET_H_INCLUDED_

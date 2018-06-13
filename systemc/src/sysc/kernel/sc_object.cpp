@@ -29,10 +29,10 @@
 
 #include <cstdlib>
 #include <cassert>
-#include <stddef.h>
+#include <cstddef>
 #include <cstdio>
-#include <string.h>
-#include <ctype.h>
+#include <cstring>
+#include <cctype>
 
 #include "sysc/kernel/sc_externs.h"
 #include "sysc/kernel/sc_kernel_ids.h"
@@ -44,7 +44,6 @@
 #include "sysc/kernel/sc_simcontext.h"
 #include "sysc/kernel/sc_event.h"
 #include "sysc/utils/sc_hash.h"
-#include "sysc/utils/sc_iostream.h"
 #include "sysc/utils/sc_list.h"
 #include "sysc/utils/sc_utils_ids.h"
 #include "sysc/utils/sc_mempool.h"
@@ -84,7 +83,7 @@ sc_object::add_child_object( sc_object* object_ )
 const char*
 sc_object::basename() const
 {
-    size_t pos; // position of last SC_HIERARCHY_CHAR.
+    std::size_t pos; // position of last SC_HIERARCHY_CHAR.
     pos = m_name.rfind( (char)SC_HIERARCHY_CHAR );
     return ( pos == m_name.npos ) ? m_name.c_str() : &(m_name.c_str()[pos+1]);
 } 
@@ -221,7 +220,7 @@ sc_object::sc_object( const sc_object& that ) :
 static bool
 object_name_illegal_char(char ch)
 {
-    return (ch == SC_HIERARCHY_CHAR) || isspace(ch);
+    return (ch == SC_HIERARCHY_CHAR) || std::isspace(ch);
 }
 
 sc_object::sc_object(const char* nm) : 
@@ -239,7 +238,7 @@ sc_object::sc_object(const char* nm) :
     p = nm;
 
     if (nm && sc_enable_name_checking) {
-        namebuf_alloc = 1 + strlen(nm);
+        namebuf_alloc = 1 + std::strlen(nm);
         namebuf = (char*) sc_mempool::allocate(namebuf_alloc);
         char* q = namebuf;
         const char* r = nm;

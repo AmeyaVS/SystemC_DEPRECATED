@@ -29,10 +29,12 @@
 #ifndef SC_INTERFACE_H
 #define SC_INTERFACE_H
 
+#include "sysc/kernel/sc_cmnhdr.h"
+
 namespace sc_core {
 
-class sc_event;
-class sc_port_base;
+class SC_API sc_event;
+class SC_API sc_port_base;
 
 
 // ----------------------------------------------------------------------------
@@ -42,7 +44,7 @@ class sc_port_base;
 //  BEWARE: Direct inheritance from this class must be done virtual.
 // ----------------------------------------------------------------------------
 
-class sc_interface
+class SC_API sc_interface
 {
 public:
 

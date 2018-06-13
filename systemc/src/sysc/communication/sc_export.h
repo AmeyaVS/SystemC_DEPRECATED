@@ -34,6 +34,7 @@
 #include "sysc/communication/sc_communication_ids.h"
 #include "sysc/communication/sc_interface.h"
 #include "sysc/kernel/sc_object.h"
+#include "sysc/utils/sc_typeindex.h"
 
 #if ! defined( SC_DISABLE_VIRTUAL_BIND )
 #  define SC_VIRTUAL_ virtual
@@ -49,7 +50,7 @@ namespace sc_core {
 //  Abstract base class for class sc_export<IF>.
 //=============================================================================
 
-class sc_export_base : public sc_object
+class SC_API sc_export_base : public sc_object
 {
     friend class sc_export_registry;
 public:
@@ -62,6 +63,9 @@ public:
 
     virtual       sc_interface* get_interface() = 0;
     virtual       const sc_interface* get_interface() const = 0;
+
+    // return RTTI information of associated interface
+    virtual sc_type_index get_interface_type() const = 0;
 
 protected:
     
@@ -88,12 +92,12 @@ protected:
     // called after simulation ends (does nothing)
     virtual void end_of_simulation();
 
-    virtual const char* if_typename() const = 0;
- 
     // error reporting
     void report_error( const char* id, const char* add_msg = 0) const;
 
 private:
+    const char* if_typename() const
+      { return get_interface_type().name(); }
 
     void construction_done();
     void elaboration_done();
@@ -194,10 +198,11 @@ public: // binding:
 public: // identification:
     virtual const char* kind() const { return "sc_export"; }
 
-protected:
-  const char* if_typename() const {
-    return typeid( IF ).name();
-  }
+    // return RTTI information of associated interface
+    virtual sc_type_index get_interface_type() const
+    {
+        return typeid( IF );
+    }
 
 private: // disabled
     sc_export( const this_type& );
@@ -224,7 +229,7 @@ public:
     void remove( sc_export_base* );
 
     int size() const
-        { return m_export_vec.size(); }
+        { return static_cast<int>(m_export_vec.size()); }
 
 private:
 

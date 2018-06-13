@@ -41,9 +41,9 @@ SC_MODULE(Mod)
     sc_fxval fxv;
     sc_fxval_fast fxvf;
 
-    assert(sc_abs(-1) == 1);
-    assert(sc_max(1, 2) == 2);
-    assert(sc_min(1, 2) == 1);
+    sc_assert(sc_abs(-1) == 1);
+    sc_assert(sc_max(1, 2) == 2);
+    sc_assert(sc_min(1, 2) == 1);
     sc_copyright();
     sc_version();
     sc_release();
@@ -55,7 +55,7 @@ SC_MODULE(Mod)
     sev = SC_WARNING;
     sev = SC_ERROR;
     sev = SC_FATAL;
-    assert (sev == SC_FATAL);
+    sc_assert (sev == SC_FATAL);
 
     sc_actions act;
     act = SC_DO_NOTHING;
@@ -82,7 +82,7 @@ struct Top: sc_module
 
 int sc_main(int argc, char* argv[])
 {
-#if defined(_MSC_VER) && _MSC_VER >= 1400
+#if defined(_MSC_VER) && _MSC_VER < 1900
     _set_output_format(_TWO_DIGIT_EXPONENT);
 #endif
 

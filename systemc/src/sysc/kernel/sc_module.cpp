@@ -28,9 +28,9 @@
 
 
 #include <cassert>
-#include <math.h>
-#include <stddef.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstddef>
+#include <cstdio>
 
 #include "sysc/kernel/sc_event.h"
 #include "sysc/kernel/sc_kernel_ids.h"
@@ -50,7 +50,6 @@
 #include "sysc/communication/sc_signal.h"
 #include "sysc/communication/sc_signal_ports.h"
 #include "sysc/utils/sc_utils_ids.h"
-#include "sysc/utils/sc_iostream.h"
 
 namespace sc_core {
 
@@ -99,7 +98,7 @@ sc_module_dynalloc_list::~sc_module_dynalloc_list()
 
 // ----------------------------------------------------------------------------
 
-sc_module*
+SC_API sc_module*
 sc_module_dynalloc( sc_module* module_ )
 {
     static sc_module_dynalloc_list dynalloc_list;
@@ -131,7 +130,7 @@ sc_bind_proxy::sc_bind_proxy( sc_port_base& port_ )
 {}
 
 
-const sc_bind_proxy SC_BIND_PROXY_NIL;
+SC_API const sc_bind_proxy SC_BIND_PROXY_NIL;
 
 
 // ----------------------------------------------------------------------------

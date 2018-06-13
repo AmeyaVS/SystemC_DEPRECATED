@@ -1,4 +1,5 @@
 #include <systemc>
+#include <cstring>
 using namespace sc_core;
 using namespace sc_dt;
 using std::cout;
@@ -27,12 +28,12 @@ struct Top: sc_module
     : clk("clk", 20, SC_NS, 0.75, 5, SC_NS, false)
   {
     m = new M("m");
-    assert(strcmp(clk.name(), "top.clk") == 0);
-    assert(strcmp(clk.kind(), "sc_clock") == 0);
-    assert(clk.period() == sc_time(20, SC_NS));
-    assert(clk.duty_cycle() == 0.75);
-    assert(clk.start_time() == sc_time(5, SC_NS));
-    assert(clk.posedge_first() == false);
+    sc_assert(strcmp(clk.name(), "top.clk") == 0);
+    sc_assert(strcmp(clk.kind(), "sc_clock") == 0);
+    sc_assert(clk.period() == sc_time(20, SC_NS));
+    sc_assert(clk.duty_cycle() == 0.75);
+    sc_assert(clk.start_time() == sc_time(5, SC_NS));
+    sc_assert(clk.posedge_first() == false);
   }
 };
 

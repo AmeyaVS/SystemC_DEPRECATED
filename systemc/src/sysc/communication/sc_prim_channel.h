@@ -41,7 +41,7 @@ namespace sc_core {
 //  Abstract base class of all primitive channel classes.
 // ----------------------------------------------------------------------------
 
-class sc_prim_channel
+class SC_API sc_prim_channel
 : public sc_object
 {
     friend class sc_prim_channel_registry;
@@ -238,7 +238,7 @@ public:
 
 
     int size() const
-        { return m_prim_channel_vec.size(); }
+        { return static_cast<int>(m_prim_channel_vec.size()); }
 
     inline void request_update( sc_prim_channel& );
     void async_request_update( sc_prim_channel& );

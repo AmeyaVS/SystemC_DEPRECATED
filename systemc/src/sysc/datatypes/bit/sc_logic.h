@@ -64,8 +64,7 @@
 
 
 #include <cstdio>
-
-#include "sysc/utils/sc_iostream.h"
+#include "sysc/kernel/sc_cmnhdr.h"
 #include "sysc/kernel/sc_macros.h"
 #include "sysc/utils/sc_mempool.h"
 #include "sysc/datatypes/bit/sc_bit.h"
@@ -98,7 +97,7 @@ enum sc_logic_value_t
 //  Four-valued logic type.
 // ----------------------------------------------------------------------------
 
-class sc_logic
+class SC_API sc_logic
 {
 private:
 
@@ -140,7 +139,7 @@ private:
 
     static sc_logic_value_t to_value( int i )
 	{
-	    if( i < 0 || i > 3 ) {
+	    if( i < Log_0 || i > Log_X ) {
 		invalid_value( i );
 	    }
 	    return sc_logic_value_t( i );
@@ -367,16 +366,16 @@ operator >> ( ::std::istream& is, sc_logic& a )
 }
 
 
-extern const sc_logic SC_LOGIC_0;
-extern const sc_logic SC_LOGIC_1;
-extern const sc_logic SC_LOGIC_Z;
-extern const sc_logic SC_LOGIC_X;
+extern SC_API const sc_logic SC_LOGIC_0;
+extern SC_API const sc_logic SC_LOGIC_1;
+extern SC_API const sc_logic SC_LOGIC_Z;
+extern SC_API const sc_logic SC_LOGIC_X;
 
 // #ifdef SC_DT_DEPRECATED
-extern const sc_logic sc_logic_0;
-extern const sc_logic sc_logic_1;
-extern const sc_logic sc_logic_Z;
-extern const sc_logic sc_logic_X;
+extern SC_API const sc_logic sc_logic_0;
+extern SC_API const sc_logic sc_logic_1;
+extern SC_API const sc_logic sc_logic_Z;
+extern SC_API const sc_logic sc_logic_X;
 // #endif
 
 } // namespace sc_dt

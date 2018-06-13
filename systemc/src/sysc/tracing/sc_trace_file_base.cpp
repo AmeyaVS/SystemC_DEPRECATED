@@ -47,6 +47,8 @@
 #  include "sysc/kernel/sc_object_int.h"
 #endif
 
+#include <sstream>
+
 namespace sc_core {
 
 bool sc_trace_file_base::tracing_initialized_ = false;
@@ -248,7 +250,7 @@ sc_trace_file_base::add_trace_check( const std::string & name ) const
 }
 
 // obtain formatted time string
-std::string localtime_string()
+SC_API std::string localtime_string()
 {
     char buf[200];
     time_t long_time;
