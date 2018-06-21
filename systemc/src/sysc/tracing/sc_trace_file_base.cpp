@@ -68,7 +68,7 @@ sc_trace_file_base::sc_trace_file_base( const char* name, const char* extension 
 #endif
   , fp(0)
   , trace_unit_fs()
-  , kernel_unit_fs()
+  , kernel_unit_fs(1.0) //< Setting this to 1.0 leads to No VCD file being created when simulation time is not advanced. More details available here:http://forums.accellera.org/topic/6052-possible-bug-in-vcd-tracing/
   , timescale_set_by_user(false)
   , filename_()
   , initialized_(false)

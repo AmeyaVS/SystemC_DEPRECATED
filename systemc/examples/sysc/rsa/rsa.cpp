@@ -103,7 +103,7 @@ randomize( int seed  )
   in_seed = ( seed <= 0 ? static_cast<long>(time( 0 )) : seed );
 
 #ifndef WIN32
-  srand48( in_seed );
+  srand( in_seed ); //< When enabling the only use of -std=c++11 flag in Cygwin the build fails due to srand48 not being in the Official C++ standard.
 #else
   srand( ( unsigned ) in_seed );
 #endif
@@ -119,7 +119,7 @@ inline
 bool
 flip( double p )
 {
-  return ( drand48() < p );
+  return ( double(rand())/RAND_MAX < p ); //< Only used when building code in Cygwin with -std=c++11 flag, since drand48 is stictly not in the Official C++ Standard.
 }
 
 #else

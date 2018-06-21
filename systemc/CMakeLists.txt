@@ -212,7 +212,8 @@ project (SystemCLanguage CXX C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # On some platforms the g++/clang++ standard flag was set to gnu++.
 # Not recommended use only C++ Standard for more portable source code.
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL
+    "Setting for the Compiler Extensions features for C++ Standard")
 
 set(SystemCLanguage_VERSION_FILE "${PROJECT_SOURCE_DIR}/src/sysc/kernel/sc_ver.h")
 if(EXISTS ${SystemCLanguage_VERSION_FILE})
