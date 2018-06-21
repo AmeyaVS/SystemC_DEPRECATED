@@ -59,8 +59,12 @@ qt_blocki:
     mov x0, sp  // arg0 = old_sp
     mov sp, x3  // sp = new_sp
 
+    sub sp, sp, 160
+    // Refer here:
+    // http://forums.accellera.org/topic/6057-simple-test-case-with-sc_thread-crashes-on-a-debug-aarch64-build/
     // (*helper)(old_sp, a0, a1)
     blr x4
+    add sp, sp, 160
 
     // Callee-saved
     ldp x29, x30, [sp, #-16]  // frame, link

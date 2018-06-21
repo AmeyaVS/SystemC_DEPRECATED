@@ -225,7 +225,7 @@ public:
     // complete binding only if there has been a real bind
     bool unbound = (binders.size() == 1 && m_export_callback_created);
     // no call to get_base_interface has consumed the export - ignore
-    if (unbound) return;
+    if (unbound && !m_hierarch_bind) return; //< Fix for hierarchical multi-bind refer here: http://forums.accellera.org/topic/5661-unbound-multi_passthrough_initiator_socketmulti_passthrough_target_socket/ and http://forums.accellera.org/topic/5908-is-hierarchical-bind-not-supported-anymore-in-systemc-232/
 
     // iterate over all binders
     for (unsigned int i=0; i<binders.size(); i++) {
