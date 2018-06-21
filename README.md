@@ -11,6 +11,8 @@ Following directories contains:
   Implementation.
 * __[systemc-regressions](systemc-regressions):__ Contains the regressions test suite for the above
   mentioned library.
+* __[systemc-cci](systemc-cci):__ Contains the draft release of the SystemC-CCI Implementation.
+* __[systemc-uvm](systemc-uvm):__ Contains the beta release of the UVM-SystemC release.
 
 ___
 
